@@ -1,0 +1,98 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tourist/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/tourist",
+        "index": "apps/tourist/src/index.html",
+        "baseHref": "/",
+        "main": "apps/tourist/src/main.ts",
+        "polyfills": "apps/tourist/src/polyfills.ts",
+        "tsConfig": "apps/tourist/tsconfig.app.json",
+        "assets": ["apps/tourist/src/favicon.ico", "apps/tourist/src/assets"],
+        "styles": ["apps/tourist/src/styles.scss"],
+        "scripts": [],
+        "webpackConfig": "apps/tourist/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/tourist/src/environments/environment.ts",
+              "with": "apps/tourist/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "webpackConfig": "apps/tourist/webpack.config.prod.js"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/react:module-federation-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "tourist:build",
+        "hmr": true,
+        "port": 4201
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "tourist:build:development"
+        },
+        "production": {
+          "buildTarget": "tourist:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/tourist/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/tourist"],
+      "options": {
+        "jestConfig": "apps/tourist/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "tourist:build",
+        "port": 4201
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "tourist:build:development"
+        },
+        "production": {
+          "buildTarget": "tourist:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
