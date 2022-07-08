@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve --prod",
-    "build": "nx run-many --target=build --projects=shell,admin,contributor,partner,tourist --parallel=true && shx cp -r dist/apps/admin dist/apps/shell && shx cp -r dist/apps/partner dist/apps/shell && shx cp -r dist/apps/contributor dist/apps/shell && shx cp -r dist/apps/tourist dist/apps/shell",
+    "start": "nx serve",
+    "build": "nx run-many --target=build --projects=shell,admin,contributor,partner,tourist --parallel=true",
     "test": "nx test"
   },
   "private": true,

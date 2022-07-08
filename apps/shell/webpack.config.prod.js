@@ -21,9 +21,9 @@ module.exports = withModuleFederation({
    * ]
    */
   remotes: [
-    ['tourist', 'tourist/remoteEntry.js'],
-    ['partner', 'partner/remoteEntry.js'],
-    ['contributor', 'contributor/remoteEntry.js'],
-    ['admin', 'admin/remoteEntry.js'],
+    ['tourist', '../tourist/remoteEntry.js'],
+    ['partner', '../partner/remoteEntry.js'],
+    ['contributor', '../contributor/remoteEntry.js'],
+    ['admin', '../admin/remoteEntry.js'],
   ],
 });
