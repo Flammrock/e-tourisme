@@ -1,1 +1,19 @@
-export type AmplifyDependentResourcesAttributes = {}
+export type AmplifyDependentResourcesAttributes = {
+    "auth": {
+        "userPoolGroups": {
+            "adminsGroupRole": "string",
+            "partnersGroupRole": "string",
+            "contributorsGroupRole": "string",
+            "touristsGroupRole": "string"
+        },
+        "etourisme25b3c2f025b3c2f0": {
+            "IdentityPoolId": "string",
+            "IdentityPoolName": "string",
+            "UserPoolId": "string",
+            "UserPoolArn": "string",
+            "UserPoolName": "string",
+            "AppClientIDWeb": "string",
+            "AppClientID": "string"
+        }
+    }
+}

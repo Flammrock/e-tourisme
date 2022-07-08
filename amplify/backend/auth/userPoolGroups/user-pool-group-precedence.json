@@ -1,0 +1,18 @@
+[
+  {
+    "groupName": "admins",
+    "precedence": 1
+  },
+  {
+    "groupName": "partners",
+    "precedence": 2
+  },
+  {
+    "groupName": "contributors",
+    "precedence": 3
+  },
+  {
+    "groupName": "tourists",
+    "precedence": 4
+  }
+]
