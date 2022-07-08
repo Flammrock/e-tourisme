@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "build": "nx run-many --target=build --projects=shell,admin,contributor,partner,tourist --parallel=true",
+    "build": "nx run-many --target=build --projects=shell,admin,contributor,partner,tourist --parallel=true && shx mv dist/apps/admin dist/apps/shell && shx mv dist/apps/partner dist/apps/shell && shx mv dist/apps/contributor dist/apps/shell && shx mv dist/apps/tourist dist/apps/shell",
     "test": "nx test"
   },
   "private": true,

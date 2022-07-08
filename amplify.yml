@@ -2,18 +2,21 @@ version: 1
 applications:
   - frontend:
       phases:
-        build:
-          commands: 
+        preBuild:
+          commands:
+            - pwd
             - cd ../../
-            - npm install
+            - pwd
+            - npm ci
+        build:
+          commands:
+            - pwd
             - npm run-script build
-            - cd apps/shell
-            - npm install
       artifacts:
         baseDirectory: ../../dist/apps/shell
         files:
-          - '../**/*'
+          - '**/*'
       cache:
-        paths: 
+        paths:
             - node_modules/**/*
     appRoot: apps/shell
