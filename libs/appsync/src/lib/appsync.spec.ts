@@ -1,8 +1,8 @@
-import { AppsyncModule } from './appsync';
+import { AppSyncModule } from './appsync';
 
 describe('appsync', () => {
   it('should work', () => {
-    new AppsyncModule();
+    new AppSyncModule();
     // expect(appsync()).toEqual('appsync');
   });
 });

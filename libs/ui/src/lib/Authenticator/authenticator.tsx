@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { AppSyncModule } from '@e-tourisme/appsync';
 import { Auth, Hub } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, CheckboxField, SelectField, useAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 new AppSyncModule();
@@ -55,7 +55,7 @@ export enum AuthState {
  *
  */
 export interface AuthSession {
-  user: User | null;
+  user: User;
   state: AuthState;
   signOut: () => void;
 }
@@ -65,7 +65,7 @@ export interface AuthSession {
  * Authentication System has not been initialized yet
  */
 const defaultAuthSession: AuthSession = {
-  user: null,
+  user: {} as User,
   state: AuthState.LOADING,
   signOut: () => null,
 };
@@ -172,7 +172,50 @@ export interface AuthFormProps {}
  * @returns a Authenticator wrapped inside a AuthForm
  */
 export function AuthForm(props: AuthFormProps) {
-  return <Authenticator></Authenticator>;
+  return <Authenticator
+  
+  components={{
+    SignUp: {
+      FormFields() {
+        const { validationErrors } = useAuthenticator();
+
+        return (
+          <>
+            {/* Re-use default `Authenticator.SignUp.FormFields` */}
+            <Authenticator.SignUp.FormFields />
+
+            {/* fetch all groups using graphql */}
+            <SelectField label="Type de compte" name="custom:group">
+              <option value="tourist">Touriste</option>
+              <option value="contributor">Contributeur</option>
+              <option value="partner">Partenaire</option>
+            </SelectField>
+
+            {/* Append & require Terms & Conditions field to sign up  */}
+            <CheckboxField
+              errorMessage={validationErrors['acknowledgement'] as string}
+              hasError={!!validationErrors['acknowledgement']}
+              name="acknowledgement"
+              value="yes"
+              label="I agree with the Terms & Conditions"
+            />
+          </>
+        );
+      },
+    },
+  }}
+  services={{
+    async validateCustomSignUp(formData) {
+      if (!formData.acknowledgement) {
+        return {
+          acknowledgement: 'You must agree to the Terms & Conditions',
+        };
+      }
+      return;
+    },
+  }}
+  
+  ></Authenticator>;
 }
 
 /**
@@ -343,7 +386,7 @@ export function AuthContainer(props: AuthProps) {
       } catch {
         console.log('NOT CONNECTED!');
         setSession({
-          user: null,
+          user: {} as User,
           state: AuthState.NOT_CONNECTED,
           signOut: () => null,
         });

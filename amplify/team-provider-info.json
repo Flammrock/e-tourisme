@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "etourisme25b3c2f025b3c2f0": {}
+        "etourisme25b3c2f025b3c2f0": {},
+        "userPoolGroups": {}
       }
     }
   }

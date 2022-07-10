@@ -52,7 +52,10 @@ export function Home() {
       <div style={{ background: 'red' }}>
         <AuthConnected>
           {(session) => (
-            <>On me dit à l'oreillette que vous êtes bien connecté !</>
+            <>
+            You are connected {session.user.name}!
+            <button onClick={session.signOut}>Sign Out</button>
+            </>
           )}
         </AuthConnected>
       </div>
