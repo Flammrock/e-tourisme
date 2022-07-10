@@ -7,14 +7,15 @@
     "appsync": "libs/appsync",
     "contributor": "apps/contributor",
     "contributor-e2e": "apps/contributor-e2e",
-    "e-tourisme": "apps/e-tourisme",
-    "e-tourisme-e2e": "apps/e-tourisme-e2e",
+    "data": "libs/data",
     "partner": "apps/partner",
     "partner-e2e": "apps/partner-e2e",
     "shell": "apps/shell",
     "shell-e2e": "apps/shell-e2e",
     "tourist": "apps/tourist",
     "tourist-e2e": "apps/tourist-e2e",
-    "ui": "libs/ui"
+    "ui": "libs/ui",
+    "visitor": "apps/visitor",
+    "visitor-e2e": "apps/visitor-e2e"
   }
 }

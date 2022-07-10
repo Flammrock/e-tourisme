@@ -4,4 +4,4 @@ import config from './aws-exports';
 Amplify.configure(config);
 
 
-export class AppsyncModule {}
+export class AppSyncModule {}

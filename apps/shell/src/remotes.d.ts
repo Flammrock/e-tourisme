@@ -5,3 +5,4 @@ declare module 'tourist/Module';
 declare module 'partner/Module';
 declare module 'contributor/Module';
 declare module 'admin/Module';
+declare module 'visitor/Module';

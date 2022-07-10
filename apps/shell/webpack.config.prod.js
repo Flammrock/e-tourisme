@@ -25,5 +25,6 @@ module.exports = withModuleFederation({
     ['partner', '/partner/remoteEntry.js'],
     ['contributor', '/contributor/remoteEntry.js'],
     ['admin', '/admin/remoteEntry.js'],
+    ['visitor', '/visitor/remoteEntry.js']
   ],
 });

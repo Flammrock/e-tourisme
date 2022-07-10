@@ -1,17 +1,17 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/e-tourisme-e2e/src",
+  "sourceRoot": "apps/visitor-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/e-tourisme-e2e/cypress.json",
-        "devServerTarget": "e-tourisme:serve:development"
+        "cypressConfig": "apps/visitor-e2e/cypress.json",
+        "devServerTarget": "visitor:serve:development"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "e-tourisme:serve:production"
+          "devServerTarget": "visitor:serve:production"
         }
       }
     },
@@ -19,10 +19,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/e-tourisme-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/visitor-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["e-tourisme"]
+  "implicitDependencies": ["visitor"]
 }
