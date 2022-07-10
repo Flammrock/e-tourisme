@@ -1,11 +1,12 @@
 version: 1
 applications:
-  - backend:
-    phases:
-      build:
-        commands:
-          - amplifyPush --simple
-  - frontend:
+  - appRoot: apps/shell
+    backend:
+      phases:
+        build:
+          commands:
+            - amplifyPush --simple
+    frontend:
       phases:
         preBuild:
           commands:
@@ -24,4 +25,4 @@ applications:
       cache:
         paths:
             - node_modules/**/*
-    appRoot: apps/shell
+    
