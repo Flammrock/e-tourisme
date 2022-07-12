@@ -37,15 +37,14 @@
     "sharedId": "25b3c2f0",
     "resourceName": "etourisme25b3c2f025b3c2f0",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "manual",
-    "thirdPartyAuth": false,
+    "useDefault": "defaultSocial",
     "usernameAttributes": [
       "email, phone_number"
     ],
     "userPoolGroups": true,
     "adminQueries": false,
     "triggers": {},
-    "hostedUI": false,
+    "hostedUI": true,
     "userPoolGroupList": [
       "admins",
       "partners",
@@ -54,6 +53,32 @@
     ],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [],
+    "hostedUIDomainName": "etourismef738ffe2-f738ffe2",
+    "authProvidersUserPool": [
+      "Facebook",
+      "Google"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Facebook\",\"authorize_scopes\":\"email,public_profile\",\"AttributeMapping\":{\"email\":\"email\",\"name\":\"name\",\"username\":\"id\"}},{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"name\":\"name\",\"username\":\"sub\"}}]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:4200/\",\"https://main.dj1zw9xn6tfsr.amplifyapp.com/\"],\"LogoutURLs\":[\"http://localhost:4200/\",\"https://main.dj1zw9xn6tfsr.amplifyapp.com/\"]}",
+    "authProviders": [],
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
   }
 }

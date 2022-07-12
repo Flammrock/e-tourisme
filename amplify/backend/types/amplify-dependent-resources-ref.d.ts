@@ -9,6 +9,8 @@ export type AmplifyDependentResourcesAttributes = {
         "etourisme25b3c2f025b3c2f0": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
+            "HostedUIDomain": "string",
+            "OAuthMetadata": "string",
             "UserPoolId": "string",
             "UserPoolArn": "string",
             "UserPoolName": "string",
