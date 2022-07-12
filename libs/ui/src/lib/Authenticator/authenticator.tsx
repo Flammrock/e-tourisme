@@ -236,6 +236,9 @@ export interface AuthFormProps {}
  * @returns a Authenticator wrapped inside a AuthForm
  */
 export function AuthForm(props: AuthFormProps) {
+
+  const [group, setGroup] = useState<string>(DefaultGroupSelfAssigned);
+
   return (
     <Authenticator
       components={{
@@ -253,8 +256,9 @@ export function AuthForm(props: AuthFormProps) {
 
                 <SelectField
                   label="Account Type"
-                  value={DefaultGroupSelfAssigned}
+                  value={group}
                   name={CustomFieldGroup}
+                  onChange={(e) => {setGroup(e.target.value)}}
                 >
                   {groups}
                 </SelectField>
