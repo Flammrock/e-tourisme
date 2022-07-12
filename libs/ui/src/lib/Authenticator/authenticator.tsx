@@ -1,20 +1,25 @@
+/**
+ * @Author Lemmy Briot
+ */
+
+
 import React, { useState, useEffect } from 'react';
 
 import { AppSyncModule } from '@e-tourisme/appsync';
 import { Auth, Hub } from 'aws-amplify';
-import { Authenticator, CheckboxField, SelectField, useAuthenticator } from '@aws-amplify/ui-react';
+import {
+  Authenticator,
+  CheckboxField,
+  SelectField,
+  useAuthenticator,
+} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
-new AppSyncModule();
+import { User, CustomFieldGroup } from '@e-tourisme/data';
+import { SelfAssignedGroups, DefaultGroupSelfAssigned } from '@e-tourisme/data';
 
-/**
- * @exports
- *
- */
-export interface User {
-  name: string;
-  email: string;
-}
+// TODO: upgrade the design of the appsync lib
+new AppSyncModule();
 
 /**
  * @exports
@@ -53,10 +58,79 @@ export enum AuthState {
 /**
  * @exports
  *
+ * ```
+ * export interface AuthSession {
+ *   user: User;           // An object that implement the
+ *                         // User interface defined in '@e-tourisme/data'
+ * 
+ * 
+ *   state: AuthState;     // see the enum AuthState
+ * 
+ * 
+ *   signOut: () => void;  // If the User is connected, this function is 
+ *                         // has the consequence of disconnecting the user
+ *                         // and updating the authentication context
+ * }
+ * ```
+ * 
+ * @info The `AuthContext` is created in the AuthContainer React Component
+ * 
+ * An AuthSession is the most important interface, all components defined here communicate with
+ * each other by using the new concept of React : React Context
+ * 
+ * Some explanatory links:
+ * - https://fr.reactjs.org/docs/context.html
+ * - https://www.freecodecamp.org/news/react-context-for-beginners/
+ * - https://kentcdodds.com/blog/how-to-use-react-context-effectively
+ * 
+ * @tutorial
+ * An `AuthContext` is created (lower in this file) like this :
+ * ```
+ * export const AuthContext = React.createContext<AuthSession>(defaultAuthSession);
+ * ```
+ * 
+ * Then, we can create a React Component that provide an `AuthSession` like this :
+ * ```
+ * const session: AuthSession = {} as AuthSession;
+ * <AuthContext.Provider value={session}>
+ *   {props.children}
+ * </AuthContext.Provider>
+ * ```
+ * 
+ * In this case, we can retrieve the `AuthSession` in each AuthContext.Consumer like this :
+ * ```
+ * <AuthContext.Consumer>
+ *   {(session) => (
+ *     <>
+ *       We can access data user like that, your email is : {session.user.email}
+ *     </>
+ *   )}
+ * </AuthContext.Consumer>
+ * ```
  */
 export interface AuthSession {
+
+  /**
+   * An object that implement the
+   * User interface defined in '@e-tourisme/data'
+   */
   user: User;
+
+  /**
+   * Define the internal state of the authentication context which can be :
+   * - LOADING
+   * - CONNECTED
+   * - NOT_CONNECTED
+   * 
+   * @see AuthState
+   */
   state: AuthState;
+
+  /**
+   * If the User is connected, this function is 
+   * has the consequence of disconnecting the user
+   * and updating the authentication context
+   */
   signOut: () => void;
 }
 
@@ -98,46 +172,28 @@ const defaultAuthSession: AuthSession = {
  */
 export const AuthContext = React.createContext<AuthSession>(defaultAuthSession);
 
+
 /**
+ * @exports
+ * @interface
  * 
+ * Any Component like AuthContainer, AuthConnected, etc... will render
+ * all of these children according to specific conditions
  * 
- * @param children 
- * @param fn 
- * @returns 
+ * <strong>The component AuthForm and AuthConnected are the only exceptions</strong>
  */
-function recursiveMap(
-  children: React.ReactNode | readonly React.ReactNode[],
-  fn: (child: React.ReactNode) => React.ReactNode
-):
-  | (
-      | string
-      | number
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-      | React.ReactFragment
-      | React.ReactPortal
-    )[]
-  | null
-  | undefined {
-  return React.Children.map(children, (child) => {
-    if (!React.isValidElement(child)) {
-      return child;
-    }
-    if (typeof child.props.children === 'object') {
-      child = React.cloneElement(child, {
-        children: recursiveMap(child.props.children, fn),
-      });
-    }
-    return fn(child);
-  });
+export interface AuthProps {
+  children: React.ReactNode | React.ReactNode[];
 }
 
 /**
  * @exports
  *
  */
-export interface AuthProps {
-  children: React.ReactNode | React.ReactNode[];
+export interface AuthContainerProps extends AuthProps {
+  onSignUp?: (user: User) => void;
+  onSignIn?: (user: User) => void;
+  onSignOut?: (user: User) => void;
 }
 
 /**
@@ -152,6 +208,14 @@ export interface AuthConnectedProps {
  * @exports
  *
  */
+export interface AuthPermissionProps extends AuthProps {
+  group: string | string[];
+}
+
+/**
+ * @exports
+ *
+ */
 /* eslint-disable-next-line */
 export interface AuthFormProps {}
 
@@ -160,66 +224,70 @@ export interface AuthFormProps {}
  *
  * AuthForm is a React Component which wrap the original AWS Cognito React Component
  * Authenticator form (from '@aws-amplify/ui-react')
- * 
+ *
  * If you want to use the original AWS Cognito form use :
  * ```
  * import Authenticator from '@e-tourisme/ui';
  * ```
- * 
+ *
  * @todo Propagate props.children inside AWS Authenticator
- * 
+ *
  * @param props AuthFormProps
  * @returns a Authenticator wrapped inside a AuthForm
  */
 export function AuthForm(props: AuthFormProps) {
-  return <Authenticator
-  
-  components={{
-    SignUp: {
-      FormFields() {
-        const { validationErrors } = useAuthenticator();
+  return (
+    <Authenticator
+      components={{
+        SignUp: {
+          FormFields() {
+            const { validationErrors } = useAuthenticator();
 
-        return (
-          <>
-            {/* Re-use default `Authenticator.SignUp.FormFields` */}
-            <Authenticator.SignUp.FormFields />
+            const groups = Object.entries(SelfAssignedGroups).map((entry,index) => {
+              return <option key={index} value={entry[1]}>{entry[0]}</option>;
+            });
 
-            {/* fetch all groups using graphql */}
-            <SelectField label="Type de compte" name="custom:group">
-              <option value="tourist">Touriste</option>
-              <option value="contributor">Contributeur</option>
-              <option value="partner">Partenaire</option>
-            </SelectField>
+            return (
+              <>
+                <Authenticator.SignUp.FormFields />
 
-            {/* Append & require Terms & Conditions field to sign up  */}
-            <CheckboxField
-              errorMessage={validationErrors['acknowledgement'] as string}
-              hasError={!!validationErrors['acknowledgement']}
-              name="acknowledgement"
-              value="yes"
-              label="I agree with the Terms & Conditions"
-            />
-          </>
-        );
-      },
-    },
-  }}
-  services={{
-    async validateCustomSignUp(formData) {
-      if (!formData.acknowledgement) {
-        return {
-          acknowledgement: 'You must agree to the Terms & Conditions',
-        };
-      }
-      return;
-    },
-  }}
-  
-  ></Authenticator>;
+                <SelectField
+                  label="Account Type"
+                  value={DefaultGroupSelfAssigned}
+                  name={CustomFieldGroup}
+                >
+                  {groups}
+                </SelectField>
+
+                {/* Append & require Terms & Conditions field to sign up  */}
+                <CheckboxField
+                  errorMessage={validationErrors['acknowledgement'] as string}
+                  hasError={!!validationErrors['acknowledgement']}
+                  name="acknowledgement"
+                  value="yes"
+                  label="I agree with the Terms & Conditions"
+                />
+              </>
+            );
+          },
+        },
+      }}
+      services={{
+        async validateCustomSignUp(formData) {
+          if (!formData.acknowledgement) {
+            return {
+              acknowledgement: 'You must agree to the Terms & Conditions',
+            };
+          }
+          return;
+        },
+      }}
+    ></Authenticator>
+  );
 }
 
 /**
- * @warning use AuthForm instead
+ * @deprecated use AuthForm instead
  */
 export default Authenticator;
 
@@ -242,17 +310,17 @@ export default Authenticator;
  *   </AuthLoading>
  * </AuthContainer>
  * ```
- * 
+ *
  * @param props AuthProps
  * @returns a AuthLoading React component
  */
 export function AuthLoading(props: AuthProps) {
-  return (
-    <>
-      {props.children}
-      <div />
-    </>
-  );
+  const internalBuild = (session: AuthSession): React.ReactNode => {
+    if (session.state !== AuthState.LOADING) return;
+    return props.children;
+  };
+
+  return <AuthContext.Consumer>{internalBuild}</AuthContext.Consumer>;
 }
 
 /**
@@ -284,13 +352,12 @@ export function AuthLoading(props: AuthProps) {
  * @returns a AuthConnected React component
  */
 export function AuthConnected(props: AuthConnectedProps) {
-  return (
-    <AuthContext.Consumer>
-      {(session) => {
-        return props.children(session);
-      }}
-    </AuthContext.Consumer>
-  );
+  const internalBuild = (session: AuthSession): React.ReactNode => {
+    if (session.state !== AuthState.CONNECTED) return;
+    return props.children(session);
+  };
+
+  return <AuthContext.Consumer>{internalBuild}</AuthContext.Consumer>;
 }
 
 /**
@@ -318,12 +385,128 @@ export function AuthConnected(props: AuthConnectedProps) {
  * @returns a AuthNotConnected React component
  */
 export function AuthNotConnected(props: AuthProps) {
-  return (
-    <>
-      {props.children}
-      <div />
-    </>
-  );
+  const internalBuild = (session: AuthSession): React.ReactNode => {
+    if (session.state !== AuthState.NOT_CONNECTED) return;
+    return props.children;
+  };
+
+  return <AuthContext.Consumer>{internalBuild}</AuthContext.Consumer>;
+}
+
+/**
+ * @exports
+ *
+ * AuthHasPermission is a React Component which is rendered ONLY if
+ * the current user belongs to the group(s) specified by the props.group attribute
+ *
+ * @warning This Component must has \<AuthConnected\>\<\/AuthConnected\> as parent
+ *
+ * @see AuthHasNoPermission if you want to do the opposite
+ *
+ * @example
+ * If the current user is member of the group : `Partner`, he will see this :
+ * ```
+ * <AuthContainer>
+ *   <AuthConnected>
+ *     {(session) => (
+ *       <AuthHasPermission group="partners">
+ *         {session.user.name}, you are member of the group Partner!
+ *       </AuthHasPermission>
+ *     )}
+ *   </AuthConnected>
+ * </AuthContainer>
+ * ```
+ *
+ * You can also do that :
+ * ```
+ * <AuthContainer>
+ *   <AuthConnected>
+ *     {(session) => (
+ *       <>
+ *         <AuthHasPermission group={["partners","contributors"]}>
+ *           {session.user.name}, you are member of the group Partner or Contributor!
+ *           It's mean that a Tourist or an Admin can't see this
+ *         </AuthHasPermission>
+ *         <AuthHasPermission group={["admins"]}>
+ *           {session.user.name}, you are an admin!
+ *         </AuthHasPermission>
+ *       </>
+ *     )}
+ *   </AuthConnected>
+ * </AuthContainer>
+ * ```
+ *
+ * @param props AuthPermissionProps
+ * @returns a AuthHasPermission React component
+ */
+export function AuthHasPermission(props: AuthPermissionProps) {
+  const groups = Array.isArray(props.group) ? props.group : [props.group];
+
+  const internalBuild = (session: AuthSession): React.ReactNode => {
+    if (session.state !== AuthState.CONNECTED) return;
+    if (!groups.includes(session.user.group)) return;
+    return props.children;
+  };
+
+  return <AuthContext.Consumer>{internalBuild}</AuthContext.Consumer>;
+}
+
+/**
+ * @exports
+ *
+ * AuthHasNoPermission is a React Component which is rendered ONLY if
+ * the current user belongs to the group(s) specified by the props.group attribute
+ *
+ * @warning This Component must has \<AuthConnected\>\<\/AuthConnected\> as parent
+ *
+ * @see AuthHasPermission if you want to do the opposite
+ *
+ * @example
+ * If the current user is member of the group : `Partner`, he will see this :
+ * ```
+ * <AuthContainer>
+ *   <AuthConnected>
+ *     {(session) => (
+ *       <AuthHasNoPermission group="partners">
+ *         {session.user.name}, you are NOT member of the group Partner!
+ *       </AuthHasNoPermission>
+ *     )}
+ *   </AuthConnected>
+ * </AuthContainer>
+ * ```
+ *
+ * You can also do that :
+ * ```
+ * <AuthContainer>
+ *   <AuthConnected>
+ *     {(session) => (
+ *       <>
+ *         <AuthHasNoPermission group={["partners","contributors"]}>
+ *           {session.user.name}, you are NOT member of the group Partner and NOT member of the group Contributor!
+ *           It's mean that a Tourist or an Admin can see this
+ *         </AuthHasNoPermission>
+ *         <AuthHasNoPermission group={["admins"]}>
+ *           {session.user.name}, you are NOT an admin!
+ *         </AuthHasNoPermission>
+ *       </>
+ *     )}
+ *   </AuthConnected>
+ * </AuthContainer>
+ * ```
+ *
+ * @param props AuthPermissionProps
+ * @returns a AuthHasNoPermission React component
+ */
+export function AuthHasNoPermission(props: AuthPermissionProps) {
+  const groups = Array.isArray(props.group) ? props.group : [props.group];
+
+  const internalBuild = (session: AuthSession): React.ReactNode => {
+    if (session.state !== AuthState.CONNECTED) return;
+    if (groups.includes(session.user.group)) return;
+    return props.children;
+  };
+
+  return <AuthContext.Consumer>{internalBuild}</AuthContext.Consumer>;
 }
 
 /**
@@ -369,15 +552,45 @@ export function AuthNotConnected(props: AuthProps) {
  * @param props
  * @returns
  */
-export function AuthContainer(props: AuthProps) {
+export function AuthContainer(props: AuthContainerProps) {
   const [session, setSession] = useState<AuthSession>(defaultAuthSession);
   useEffect(() => {
-    const updateSession = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateSession = async (data: any | null) => {
+      if (
+        data != null &&
+        data.payload.event === 'signUp' &&
+        typeof props.onSignUp === 'function'
+      ) {
+        props.onSignUp(data.payload.data.attributes);
+      }
+      if (
+        data != null &&
+        data.payload.event === 'signIn' &&
+        typeof props.onSignIn === 'function'
+      ) {
+        props.onSignIn(data.payload.data.attributes);
+      }
+      if (
+        data != null &&
+        data.payload.event === 'signOut' &&
+        typeof props.onSignOut === 'function'
+      ) {
+        props.onSignOut(data.payload.data.attributes);
+      }
+
       try {
-        const user = await Auth.currentAuthenticatedUser();
+        const cognitoUser = await Auth.currentAuthenticatedUser();
+        console.log(cognitoUser);
+        const user: User = {
+          id: cognitoUser.attributes.sub,
+          name: cognitoUser.attributes.name,
+          email: cognitoUser.attributes.email,
+          group: cognitoUser.attributes[CustomFieldGroup]
+        };
         console.log('CONNECTED!');
         setSession({
-          user: user.attributes as User,
+          user: user,
           state: AuthState.CONNECTED,
           signOut: async () => {
             await Auth.signOut();
@@ -394,11 +607,11 @@ export function AuthContainer(props: AuthProps) {
     };
     console.log('LOADING!');
     Hub.listen('auth', updateSession);
-    updateSession();
+    updateSession(null);
     return () => Hub.remove('auth', updateSession);
-  }, []);
+  }, [props]);
 
-  const children = recursiveMap(props.children, (child) => {
+  /*const children = recursiveMap(props.children, (child) => {
     if (typeof child === 'object') {
       const el = child as JSX.Element;
       if (typeof el === 'undefined' || el === null) return child;
@@ -411,9 +624,9 @@ export function AuthContainer(props: AuthProps) {
       }
     }
     return child;
-  });
+  });*/
 
   return (
-    <AuthContext.Provider value={session}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={session}>{props.children}</AuthContext.Provider>
   );
 }

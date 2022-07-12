@@ -23,10 +23,7 @@ import {
   IonRow,
   IonButton,
   IonFooter,
-
-
-
-  setupIonicReact
+  setupIonicReact,
 } from '@ionic/react';
 /*import { IonReactRouter } from '@ionic/react-router';*/
 import { airplane, bed, earth, settings, today, train } from 'ionicons/icons';
@@ -73,7 +70,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={train} />
                   </IonCol>
-                  <IonCol>Voyager</IonCol>
+                  <IonCol>Travel</IonCol>
                 </IonRow>
               </IonItem>
               <IonItem
@@ -87,7 +84,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={earth} />
                   </IonCol>
-                  <IonCol>Explorer</IonCol>
+                  <IonCol>Explore</IonCol>
                 </IonRow>
               </IonItem>
               <IonItem
@@ -101,7 +98,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={today} />
                   </IonCol>
-                  <IonCol>À faire</IonCol>
+                  <IonCol>To do</IonCol>
                 </IonRow>
               </IonItem>
               <IonItem
@@ -115,7 +112,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={airplane} />
                   </IonCol>
-                  <IonCol>Vols</IonCol>
+                  <IonCol>Flights</IonCol>
                 </IonRow>
               </IonItem>
               <IonItem
@@ -129,7 +126,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={bed} />
                   </IonCol>
-                  <IonCol>Hôtels</IonCol>
+                  <IonCol>Hotels</IonCol>
                 </IonRow>
               </IonItem>
             </IonList>
@@ -147,7 +144,7 @@ export function App() {
                   <IonCol size="2">
                     <IonIcon icon={settings} />
                   </IonCol>
-                  <IonCol>Paramètre</IonCol>
+                  <IonCol>Settings</IonCol>
                 </IonRow>
               </IonItem>
             </IonList>

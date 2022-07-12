@@ -1,0 +1,12 @@
+projects:
+  etourisme:
+    schemaPath: libs/appsync/src/lib/graphql/schema.json
+    includes:
+      - libs/appsync/src/lib/graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: libs/appsync/src/lib/API.ts
+        docsFilePath: libs/appsync/src/lib/graphql

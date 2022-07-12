@@ -15,6 +15,17 @@
       "auth": {
         "etourisme25b3c2f025b3c2f0": {},
         "userPoolGroups": {}
+      },
+      "storage": {
+        "etourismetodo": {
+          "tableName": "etourisme-todo",
+          "region": "us-east-2",
+          "arn": "arn:aws:dynamodb:us-east-2:519918073452:table/etourisme-todo",
+          "partitionKeyName": "id",
+          "partitionKeyType": "S",
+          "sortKeyName": "type",
+          "sortKeyType": "S"
+        }
       }
     }
   }

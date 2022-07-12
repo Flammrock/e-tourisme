@@ -5,6 +5,7 @@
     "admin": "apps/admin",
     "admin-e2e": "apps/admin-e2e",
     "appsync": "libs/appsync",
+    "client": "libs/client",
     "contributor": "apps/contributor",
     "contributor-e2e": "apps/contributor-e2e",
     "data": "libs/data",

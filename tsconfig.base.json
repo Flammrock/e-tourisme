@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@e-tourisme/appsync": ["libs/appsync/src/index.ts"],
+      "@e-tourisme/client": ["libs/client/src/index.ts"],
       "@e-tourisme/data": ["libs/data/src/index.ts"],
       "@e-tourisme/ui": ["libs/ui/src/index.ts"]
     }
