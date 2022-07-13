@@ -5,7 +5,8 @@
   "scripts": {
     "start": "nx serve shell --devRemotes=visitor,admin,contributor,partner,tourist",
     "build": "nx run-many --target=build --projects=shell,visitor,admin,contributor,partner,tourist --parallel=true && shx mv dist/apps/admin dist/apps/shell && shx mv dist/apps/partner dist/apps/shell && shx mv dist/apps/contributor dist/apps/shell && shx mv dist/apps/tourist dist/apps/shell && shx mv dist/apps/visitor dist/apps/shell",
-    "test": "nx test"
+    "test": "nx test",
+    "postinstall": "etourisme-script amplify-pull dj1zw9xn6tfsr dev"
   },
   "private": true,
   "dependencies": {

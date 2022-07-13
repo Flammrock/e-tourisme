@@ -1,0 +1,6 @@
+{
+  "facebookAppIdUserPool"    : "XXXXXXXXXXXX",
+  "facebookAppSecretUserPool": "XXXXXXXXXXXX",
+  "googleAppIdUserPool"      : "XXXXXXXXXXXX",
+  "googleAppSecretUserPool"  : "XXXXXXXXXXXX"
+}
