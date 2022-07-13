@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@aws-amplify/ui": "^3.12.1",
     "@aws-amplify/ui-react": "^3.0.4",
     "@ionic/react": "^6.1.13",
     "@ionic/react-router": "^6.1.13",
@@ -19,7 +20,8 @@
     "react-dom": "18.2.0",
     "react-router-dom": "6.3.0",
     "regenerator-runtime": "0.13.7",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "use-local-storage": "^2.3.6"
   },
   "devDependencies": {
     "@nrwl/cli": "14.4.2",

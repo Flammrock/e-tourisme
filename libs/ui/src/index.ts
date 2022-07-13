@@ -1,2 +1,2 @@
-export * from './lib/Authenticator/authenticator';
+export * from './lib/Authenticator';
 export * from './lib/ui';

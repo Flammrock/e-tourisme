@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { AuthContainer } from './authenticator';
+import { AuthContainer } from './components/AuthContainer';
 
 describe('Authenticator', () => {
   it('should render successfully', () => {

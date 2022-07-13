@@ -23,6 +23,7 @@ import {
   IonRow,
   IonButton,
   IonFooter,
+  IonVirtualScroll,
   setupIonicReact,
 } from '@ionic/react';
 /*import { IonReactRouter } from '@ionic/react-router';*/
@@ -163,7 +164,7 @@ export function App() {
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
-            <IonRouterOutlet>
+            <IonRouterOutlet style={{overflowY:'auto'}}>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/city" element={<IonPage>city</IonPage>} />
