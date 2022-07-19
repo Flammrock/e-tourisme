@@ -8,6 +8,7 @@ type Account
   @model
 {
   id: ID! @primaryKey
+  userId: string
   isVerify: Boolean
   isDisable: Boolean
 }

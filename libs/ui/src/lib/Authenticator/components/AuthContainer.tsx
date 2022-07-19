@@ -11,9 +11,7 @@ import {
   DefaultAuthSession,
 } from './AuthTypes';
 import { AuthContext } from './AuthContext';
-import { CustomFieldGroup } from '@e-tourisme/data';
-import { Auth, Hub } from 'aws-amplify';
-import { User } from '@e-tourisme/data';
+import { User, Hub, Group } from '@e-tourisme/core';
 
 /**
  * @exports
@@ -65,10 +63,8 @@ export function AuthContainer(props: AuthContainerProps) {
 
   useEffect(() => {
     const updateAttributes = async () => {
-      const user = await Auth.currentAuthenticatedUser();
-      await Auth.updateUserAttributes(user, {
-        [CustomFieldGroup]: group,
-      });
+      const user = await User.fetch();
+      await user.setGroup(group as Group);
       setGroup(null);
     };
     if (group != null) {
@@ -101,30 +97,21 @@ export function AuthContainer(props: AuthContainerProps) {
       ) {
         props.onSignOut(data.payload.data.attributes);
       }
-
+      // TODO
+      
       try {
-        const cognitoUser = await Auth.currentAuthenticatedUser();
-        console.log(cognitoUser);
-        const user: User = {
-          id: cognitoUser.attributes.sub,
-          name: cognitoUser.attributes.name,
-          email: cognitoUser.attributes.email,
-          group: cognitoUser.attributes[CustomFieldGroup],
-        };
+
+        const user = await User.fetch();
         console.log('CONNECTED!');
         setSession({
           user: user,
-          state: AuthState.CONNECTED,
-          signOut: async () => {
-            await Auth.signOut();
-          },
+          state: AuthState.CONNECTED
         });
       } catch {
         console.log('NOT CONNECTED!');
         setSession({
           user: {} as User,
-          state: AuthState.NOT_CONNECTED,
-          signOut: () => null,
+          state: AuthState.NOT_CONNECTED
         });
       }
     };
@@ -132,22 +119,7 @@ export function AuthContainer(props: AuthContainerProps) {
     Hub.listen('auth', updateSession);
     updateSession(null);
     return () => Hub.remove('auth', updateSession);
-  }, [props]);
-
-  /*const children = recursiveMap(props.children, (child) => {
-      if (typeof child === 'object') {
-        const el = child as JSX.Element;
-        if (typeof el === 'undefined' || el === null) return child;
-        if (el.type === AuthLoading) {
-          return session.state === AuthState.LOADING ? child : null;
-        } else if (el.type === AuthConnected) {
-          return session.state === AuthState.CONNECTED ? child : null;
-        } else if (el.type === AuthNotConnected) {
-          return session.state === AuthState.NOT_CONNECTED ? child : null;
-        }
-      }
-      return child;
-    });*/
+  },[]); // TODO
 
   return (
     <AuthContext.Provider value={session}>

@@ -2,14 +2,7 @@
  * @Author Lemmy Briot
  */
 
-import { User } from '@e-tourisme/data';
-
-/**
- * @exports
- *
- */
-/* eslint-disable-next-line */
-export interface AuthFormProps {}
+import { User, Group } from '@e-tourisme/core';
 
 /**
  * @exports
@@ -114,13 +107,6 @@ export interface AuthSession {
    * @see AuthState
    */
   state: AuthState;
-
-  /**
-   * If the User is connected, this function is
-   * has the consequence of disconnecting the user
-   * and updating the authentication context
-   */
-  signOut: () => void;
 }
 
 /**
@@ -130,10 +116,7 @@ export interface AuthSession {
 export const DefaultAuthSession: AuthSession = {
   user: {} as User,
   state: AuthState.LOADING,
-  signOut: () => null,
 };
-
-
 
 /**
  * @exports
@@ -171,5 +154,5 @@ export interface AuthConnectedProps {
  *
  */
 export interface AuthPermissionProps extends AuthProps {
-  group: string | string[];
+  group: Group | Group[];
 }

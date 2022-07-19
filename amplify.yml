@@ -8,14 +8,11 @@ applications:
       phases:
         preBuild:
           commands:
-            - pwd
             - cd ../../
-            - pwd
             - npm ci
             - amplifyPush --simple
         build:
           commands:
-            - pwd
             - npm run-script build
       artifacts:
         baseDirectory: ../../dist/apps/shell

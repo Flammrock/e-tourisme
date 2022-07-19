@@ -11,7 +11,7 @@ import {
   AuthHasNoPermission,
 } from '@e-tourisme/ui';
 
-import { Groups } from '@e-tourisme/data';
+import { Groups } from '@e-tourisme/core';
 
 /*import { IonReactRouter } from '@ionic/react-router';
   import { ellipse, square, triangle } from 'ionicons/icons';*/
@@ -23,10 +23,10 @@ import { Groups } from '@e-tourisme/data';
  *   {(signOut, user) => (
  *     <>
  *       <AuthHasPermission group="admin">
- *         Bonjour Admin ! Nous vous avons préparé du café !
+ *         You are admin
  *       </AuthHasPermission>
  *       <AuthHasNoPermission group="admin">
- *         Hmmm, que faîtes-vous ici..monsieur.. SORTEZZ!!
+ *         You have not enough permissions
  *       </AuthHasNoPermission>
  *     </>
  *   )}
@@ -57,7 +57,7 @@ export function Home() {
               {(session) => (
                 <>
                   You are connected {session.user.name}!
-                  <IonButton color="danger" onClick={session.signOut}>Sign Out</IonButton>
+                  <IonButton color="danger" onClick={session.user.signOut}>Sign Out</IonButton>
                   <br /><br /><br />
                   <hr />
                   <AuthHasPermission group={Groups.Admins}>
